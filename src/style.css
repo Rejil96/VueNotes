@@ -1,0 +1,9 @@
+html, body {
+  margin: 0px !important;
+  padding: 0px !important;
+  overflow-x: hidden;
+}
+
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+}
