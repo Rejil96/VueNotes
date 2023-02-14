@@ -1,9 +1,6 @@
 <script setup>
-import { ref, onBeforeMount } from "vue";
+import { ref, onBeforeMount, onUnmounted } from "vue";
 
-//This is a third party package from npm which is for creating unique id on every object data
-// (In react there is one package which exactly work like this)
-import { uuid } from "vue-uuid";
 import NoteCard from "./components/NoteCard.vue";
 
 const isShowNoteInputControl = ref(false);
@@ -18,6 +15,8 @@ onBeforeMount(() => {
   }
 });
 
+
+
 // To get random background colors
 function getRandomColor() {
   const color = "hsl(" + Math.random() * 360 + ", 100%, 75%)";
@@ -28,12 +27,18 @@ const setDataToLoaclStorage = () => {
   localStorage.setItem("notes", JSON.stringify(notesArray.value));
 };
 
+function getRandomId () {
+  var randLetter = String.fromCharCode(65 + Math.floor(Math.random() * 26));
+  var uniqid = randLetter + Date.now();
+  return uniqid
+}
+
 const onAddNote = () => {
   if (noteTextData.value.trim().length < 8) {
     return (errorMsg.value = "* the note should contain atleast 8 charecters!");
   }
   notesArray.value.push({
-    id: uuid.v4(),
+    id: getRandomId(),
     noteText: noteTextData.value,
     date: new Date().toLocaleString("en-US"),
     backgroundColor: getRandomColor(notesArray.value),
@@ -48,6 +53,7 @@ const onAddNote = () => {
 const deleteFunc = (idDel) => {
   notesArray.value = notesArray.value.filter((eachData) => eachData.id !== idDel);
   setDataToLoaclStorage();
+ 
 };
 </script>
 
@@ -77,8 +83,11 @@ const deleteFunc = (idDel) => {
       </div>
 
       <div class="notes-listing-container">
+        <div class="empty-view" v-if="notesArray.length === 0">
+          <h1 class="empty-notes-text">Make some notes</h1>
+        </div>
         <template v-for="note in notesArray">
-          <NoteCard :noteData="note" :deleteFunc="deleteFunc" />
+          <NoteCard :noteData="note" @onDeleteEmit="deleteFunc" />
         </template>
       </div>
     </div>
@@ -191,4 +200,21 @@ main {
   color: #b33434;
   align-self: flex-start;
 }
+
+.empty-view{
+  width: 100%;
+  height: 50vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.empty-notes-text{
+  font-size: 100px;
+  font-weight: bolder;
+  text-align: center;
+  color: #131313;
+  opacity: 0.3;
+}
+
 </style>

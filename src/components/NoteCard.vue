@@ -1,8 +1,11 @@
 <script setup>
+
 const { noteData, deleteFunc } = defineProps(["noteData", "deleteFunc"]);
 
-const onDeleteClicked = () => {
-  deleteFunc(noteData.id);
+const emit = defineEmits(['onDeleteEmit'])
+
+const onDeleteClicked = (delId) => {
+  emit('onDeleteEmit', delId)
 };
 </script>
 
@@ -11,7 +14,7 @@ const onDeleteClicked = () => {
     <p class="note-text-data">{{ noteData.noteText }}</p>
     <div class="note-card-footer" :style="{ backgroundColor: noteData.backgroundColor }">
       <p class="note-text-date">{{ noteData.date }}</p>
-      <button class="delete-note-btn" @click="onDeleteClicked">
+      <button class="delete-note-btn" @click="onDeleteClicked(noteData.id)">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="16"
